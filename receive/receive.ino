@@ -13,13 +13,14 @@
  * pushbutton attached to pin 2 from +5V
  * 10K resistor attached to pin 2 from ground
  * LED attached from pin 13 to ground (or use the built-in LED on
-   most Arduino boards)
+ most Arduino boards)
+ 
  
  created  27 Sep 2005
  modified 30 Aug 2011
  by Tom Igoe
-
-This example code is in the public domain.
+ 
+ This example code is in the public domain.
  	
  http://arduino.cc/en/Tutorial/ButtonStateChange
  
@@ -52,75 +53,67 @@ void setup() {
 
 
 void loop() {
-  
-  
+
+
   unsigned long currentMillis = millis();
- 
+
   if(currentMillis - previousMillis > interval) {
     // save the last time you blinked the LED 
     previousMillis = currentMillis;   
 
 
     buttonState = digitalRead(buttonPin);
-  
-  
-  // read the pushbutton input pin:
 
-      buttonPushCounter++;
+
+    // read the pushbutton input pin:
+
+    buttonPushCounter++;
     // if the state has changed, increment the counter
     if (buttonState == HIGH) {
       // if the current state is HIGH then the button
       // wend from off to on:
-    digitalWrite(ledPin, HIGH);
-      
+      digitalWrite(ledPin, HIGH);
+
     } 
     else {
       // if the current state is LOW then the button
       // wend from on to off:
-   digitalWrite(ledPin, LOW);
+      digitalWrite(ledPin, LOW);
     }
-  if (buttonState!=lastButtonState)
-  {
-    
-    
-//      Serial.print(buttonPushCounter);
-//    if (buttonState==HIGH){
-//      Serial.println("on");
-//    }
-//    else {      
-//      Serial.println("off");
-//    }
-    bitCount++;
-    //Serial.print(bitCount);
-    buttonPushCounter=0;
-  }
-  if ((buttonPushCounter>150)&&(buttonState==lastButtonState))
-  {
-    
-    
-//      Serial.print(bitCount);
-//    if (buttonState==HIGH){
-//      Serial.println("double on");
-//    }
-//    else {      
-//      Serial.println("double off");
-//    }
-    buttonPushCounter=0;
-    bitCount=0;
-  }
-  // save the current state as the last state, 
-  //for next time through the loo
-  
-  lastButtonState = buttonState;
+    if (buttonState!=lastButtonState)
+    {
+
+
+      //      Serial.print(buttonPushCounter);
+      //    if (buttonState==HIGH){
+      //      Serial.println("on");
+      //    }
+      //    else {      
+      //      Serial.println("off");
+      //    }
+      bitCount++;
+      //Serial.print(bitCount);
+      buttonPushCounter=0;
+    }
+    if ((buttonPushCounter>150)&&(buttonState==lastButtonState))
+    {
+
+
+      //      Serial.print(bitCount);
+      //    if (buttonState==HIGH){
+      //      Serial.println("double on");
+      //    }
+      //    else {      
+      //      Serial.println("double off");
+      //    }
+      buttonPushCounter=0;
+      bitCount=0;
+    }
+    // save the current state as the last state, 
+    //for next time through the loo
+
+    lastButtonState = buttonState;
 
   }
 }
-
-
-
-
-
-
-
-
 
