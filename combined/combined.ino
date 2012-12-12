@@ -59,27 +59,28 @@ unsigned char *append_all(){
   int i;
   for(i=0; i<6; i++){
     all_appended[i] = destMAC[i];
- //   Serial.print(destMAC[i]);
+    Serial.print(destMAC[i]);
   }  
-  
+  Serial.println();
   int j;
   for(j=0; j<6; j++){
     all_appended[j+6] = sourceMAC[j];
- //   Serial.print(sourceMAC[j]);
+    Serial.print(sourceMAC[j]);
   }
+  Serial.println();
   
   int z;
   for(z=0; z<2; z++){
      all_appended[z+12] = frameType[z];
- //    Serial.print(frameType[z]);
+     Serial.print(frameType[z]);
   }
-  
+  Serial.println();  
   int k;
   for(k=0; k<50; k++){
     all_appended[k+14] = data[k];
-//    Serial.print(data[k]);
+    Serial.print(data[k]);
   }
-  
+  Serial.println();
   return all_appended;
 }
 
@@ -94,8 +95,8 @@ void setup()
     unsigned char *appended = append_all();
 //  long crc = crc_string((char *) appended);
   long crc = crc_string((char *) data);
-  for (i=0; i<51; i++){
-      Serial.print((char) data[i], HEX);
+  for (i=0; i<65; i++){
+      Serial.print( data[i], HEX);
   }
 //  for(i=0; i<64; i++){
 //    Serial.print((char) appended[i], HEX);
