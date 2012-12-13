@@ -16,7 +16,7 @@ LinkLayer::LinkLayer(int inputDatalength, char *inputSourceMAC, char *inputDestM
       0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
   };
   
-  _crc_table = &_crcTableData[0];
+  _crc_table = _crcTableData;
 
   _datalength = inputDatalength;
   _framesize = 14 + _datalength + 4;
@@ -26,8 +26,12 @@ LinkLayer::LinkLayer(int inputDatalength, char *inputSourceMAC, char *inputDestM
   _frameType = inputFrameType;
 
   MANCHESTER.SetTxPin(4);
-  Serial.begin(9600);
+  Serial.begin(9600); 
+}
 
+/* ---------------------------------------- TOP-LAYER FUNCTIONS ----------------------------------*/
+
+void LinkLayer::send_message(){
   int i;
   char payload[_datalength+1];
   char appended[_framesize];
@@ -44,8 +48,11 @@ LinkLayer::LinkLayer(int inputDatalength, char *inputSourceMAC, char *inputDestM
   print_frame(appended, _framesize);
   
   Serial.println("CRC:");
-  Serial.println(crc,HEX);  
+  Serial.println(crc,HEX); 
 }
+
+
+/* ---------------------------------------- HELPER FUNCTIONS ----------------------------------*/
 
 unsigned long LinkLayer::crc_update(unsigned long crc, byte data){
 	byte tbl_idx;
