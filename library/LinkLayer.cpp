@@ -29,7 +29,7 @@ LinkLayer::LinkLayer(int inputDatalength, char *inputSourceMAC, char *inputDestM
   Serial.begin(9600); 
 }
 
-/* ---------------------------------------- TOP-LAYER FUNCTIONS ----------------------------------*/
+/* ---------------------------------------- TOP LAYER FUNCTIONS ------------------------------------------*/
 
 void LinkLayer::send_message(){
   int i;
@@ -52,10 +52,10 @@ void LinkLayer::send_message(){
 }
 
 
-/* ---------------------------------------- HELPER FUNCTIONS ----------------------------------*/
+/* ---------------------------------------- SEND HELPER FUNCTIONS ------------------------------------------*/
 
 unsigned long LinkLayer::crc_update(unsigned long crc, byte data){
-	byte tbl_idx;
+    byte tbl_idx;
     tbl_idx = crc ^ (data >> (0 * 4));
     crc = pgm_read_dword_near(_crc_table + (tbl_idx & 0x0f)) ^ (crc >> 4);
     tbl_idx = crc ^ (data >> (1 * 4));
@@ -131,3 +131,6 @@ void LinkLayer::append_all(char *all_appended, char *payload, int framesize){
   all_appended[framesize]='\0';
   //print_frame(all_appended, framesize);
 }
+
+/* ---------------------------------------- RECEIVE HELPER FUNCTIONS ------------------------------------------*/
+

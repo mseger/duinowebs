@@ -32,6 +32,7 @@ class LinkLayer
     void send_message();
     
   private: 
+    // send instance variables
     int _datalength;
     int _framesize;
     int _incomingByte;
@@ -39,6 +40,8 @@ class LinkLayer
     char *_destMAC;
     unsigned char *_frameType;
     int *_crc_table;
+    
+    // receive instance variables
 };
 
 #endif
