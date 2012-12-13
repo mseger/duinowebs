@@ -5,7 +5,7 @@
 #include <avr/pgmspace.h>
 
 
-int datalength=50;
+int datalength=20;
 int framesize = 14 + datalength + 4;
 
 //CRC code
@@ -26,7 +26,7 @@ unsigned long crc_update(unsigned long crc, byte data)
     return crc;
 }
 
-unsigned long crc_string(char *s)
+unsigned long crc_string(unsigned char *s)
 {
   unsigned long crc = ~0L;
   while (*s)
@@ -39,32 +39,32 @@ unsigned long crc_string(char *s)
 
 //Combining code
 int incomingByte = 0;
-
-void data_generation(char *payload, int datalength)
+unsigned char testdata[21]="abcdefghijklmnopqrst";
+void data_generation(unsigned char *payload, int datalength)
 {  
   int i;
   for(i=0;i<datalength;i++)
-    payload[i] = random(10)+0x41;
+    payload[i] = testdata[i];//random(10)+0x41;
   payload[i]='\0';  
 }
 
-void print_frame(char *stuff, int framesize)
+void print_frame(unsigned char *stuff, int framesize)
 {
   int i;
   for(i=0; i<framesize; i++){
     if (stuff[i]<0x10)
       Serial.print("0");
-    Serial.print(stuff[i],HEX);
+    Serial.print((char)stuff[i]);
   }
   Serial.println();
   Serial.println();
 }
 
-char destMAC[7] = "nathan";
-char sourceMAC[7] = "allenk";
+unsigned char destMAC[7] = "nathan";
+unsigned char sourceMAC[7] = "allenk";
 unsigned char frameType[3] = {0x08, 0x10, '/0'};
 
-void append_all(char *all_appended, char *payload, int framesize){
+void append_all(unsigned char *all_appended, unsigned char *payload,unsigned int framesize){
   int i, j, k, z, y;
   
   for(i=0; i<framesize; i++) all_appended[i]=0;
@@ -97,9 +97,9 @@ void append_all(char *all_appended, char *payload, int framesize){
   for (y=3; y>=0; y--)
   {
     Serial.println(crc>>(y*0x08)&0xFF,HEX);
-    all_appended[framesize-y-1]=crc>>(y*0x08)&0xFF;
+    all_appended[framesize-y-1]=crc>>(y*0x08)&0x000000FF;
   }
-  
+
   all_appended[framesize]='\0';
   //print_frame(all_appended, framesize);
 }
@@ -112,8 +112,8 @@ void setup()
   MANCHESTER.SetTxPin(4);
   Serial.begin(9600);
   int i;
-  char payload[datalength+1];
-  char appended[framesize];
+  unsigned char payload[datalength+1];
+  unsigned char appended[framesize];
   data_generation(payload,datalength);
   
   Serial.println("Payload:");
@@ -128,6 +128,7 @@ void setup()
   
   Serial.println("CRC:");
   Serial.println(crc,HEX);
+  MANCHESTER.TransmitBytes(framesize, appended);
   
 }
 
