@@ -5,8 +5,6 @@
 #include <avr/pgmspace.h>
 
 
-int datalength=50;
-int framesize = 14 + datalength + 4;
 
 //CRC code
 static PROGMEM prog_uint32_t crc_table[16] = {
@@ -39,68 +37,51 @@ unsigned long crc_string(char *s)
 //Combining code
 int incomingByte = 0;
 
-void data_generation(char *payload, int datalength)
+unsigned char *data_generation()
 {  
+  unsigned char data[51];
   int i;
-  for(i=0;i<datalength;i++)
-    payload[i] = random(10)+0x41;
-  payload[i]='\0';  
-}
-
-void print_frame(char *stuff, int framesize)
-{
-  int i;
-  for(i=0; i<framesize; i++){
-    if (stuff[i]<0x10)
-      Serial.print("0");
-    Serial.print(stuff[i],HEX);
-  }
-  Serial.println();
-  Serial.println();
-}
-
-char destMAC[7] = "nathan";
-char sourceMAC[7] = "allenk";
-unsigned char frameType[3] = {0x08, 0x10, '/0'};
-
-void append_all(char *all_appended, char *payload, int framesize){
-  int i, j, k, z, y;
-  
-  for(i=0; i<framesize; i++) all_appended[i]=0;
-  
-  for(i=0; i<6; i++) all_appended[i] = destMAC[i];
-  //print_frame(all_appended, framesize);
-  
-
-  for(j=0; j<6; j++) all_appended[j+6] = sourceMAC[j];
-  //print_frame(all_appended, framesize);
-  
-
-  for(z=0; z<2; z++) all_appended[z+12] = frameType[z];  
-  //print_frame(all_appended, framesize);
-  
-
-  for(k=0; k<datalength+1; k++) all_appended[k+14] = payload[k];
-  
-  all_appended[framesize-4]='\0';
-  
-  
-  Serial.println("Frame:");
-  print_frame(all_appended, framesize);
-  
-  long crc = crc_string(all_appended);
-  
-  Serial.println("CRC:");
-  Serial.println(crc,HEX);
-  
-  for (y=3; y>=0; y--)
+  for(i=0;i<50;i++)
   {
-    Serial.println(crc>>(y*0x08)&0xFF,HEX);
-    all_appended[framesize-y-1]=crc>>(y*0x08)&0xFF;
+    data[i] = (unsigned char) random(10);
   }
+  return data;
+}
+
+unsigned char destMAC[7] = {0x92, 0x81, 0x22, 0xab, 0x3f, 0xfa};
+unsigned char sourceMAC[7] = {0x28, 0x11, 0xda, 0x34, 0x4b, 0x2d};
+unsigned char frameType[3] = {0x08, 0x00};
+unsigned char *data = data_generation();
+
+unsigned char *append_all(){
+  unsigned char all_appended[65]; 
   
-  all_appended[framesize]='\0';
-  //print_frame(all_appended, framesize);
+  int i;
+  for(i=0; i<6; i++){
+    all_appended[i] = destMAC[i];
+    Serial.print(destMAC[i]);
+  }  
+  Serial.println();
+  int j;
+  for(j=0; j<6; j++){
+    all_appended[j+6] = sourceMAC[j];
+    Serial.print(sourceMAC[j]);
+  }
+  Serial.println();
+  
+  int z;
+  for(z=0; z<2; z++){
+     all_appended[z+12] = frameType[z];
+     Serial.print(frameType[z]);
+  }
+  Serial.println();  
+  int k;
+  for(k=0; k<50; k++){
+    all_appended[k+14] = data[k];
+    Serial.print(data[k]);
+  }
+  Serial.println();
+  return all_appended;
 }
 
 
@@ -110,24 +91,18 @@ void setup()
 {
   MANCHESTER.SetTxPin(4);
   Serial.begin(9600);
-  int i;
-  char payload[datalength+1];
-  char appended[framesize];
-  data_generation(payload,datalength);
-  
-  Serial.println("Payload:");
-  print_frame(payload,datalength);
- 
-  append_all(appended,payload, framesize);
-  
-  long crc = crc_string(appended);
-  
-  Serial.println("Full Frame:");
-  print_frame(appended, framesize);
-  
-  Serial.println("CRC:");
+    int i;
+    unsigned char *appended = append_all();
+//  long crc = crc_string((char *) appended);
+  long crc = crc_string((char *) data);
+  for (i=0; i<65; i++){
+      Serial.print( data[i], HEX);
+  }
+//  for(i=0; i<64; i++){
+//    Serial.print((char) appended[i], HEX);
+//  }
+  Serial.println("");
   Serial.println(crc,HEX);
-  
 }
 
 void loop()

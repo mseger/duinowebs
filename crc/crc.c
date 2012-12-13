@@ -42,6 +42,31 @@
 #define REFLECT_REMAINDER(X)	(X)
 #endif
 
+const char *byte_to_binary(int x)
+{
+    static char b[9];
+    b[0] = '\0';
+
+    int z;
+    for (z = 128; z > 0; z >>= 1)
+    {
+        strcat(b, ((x & z) == z) ? "1" : "0");
+    }
+
+    return b;
+}
+
+const char *four_byte_to_binary(int x)
+{
+    static char b [33];
+    b[0] = '\0';
+    strcat(b, byte_to_binary(x>>24));
+    strcat(b, byte_to_binary(x>>16));
+    strcat(b, byte_to_binary(x>>8));
+    strcat(b, byte_to_binary(x));
+    
+    return b;
+}    
 
 /*********************************************************************
  *
@@ -160,6 +185,7 @@ crcInit(void)
     crc			   remainder;
 	int			   dividend;
 	unsigned char  bit;
+	//printf("%X\t%i\n",remainder,dividend);
 
 
     /*
@@ -194,35 +220,11 @@ crcInit(void)
          * Store the result into the table.
          */
         crcTable[dividend] = remainder;
+  		//printf("%s\n",byte_to_binary(remainder));
     }
 
 }   /* crcInit() */
 
-const char *byte_to_binary(int x)
-{
-    static char b[9];
-    b[0] = '\0';
-
-    int z;
-    for (z = 128; z > 0; z >>= 1)
-    {
-        strcat(b, ((x & z) == z) ? "1" : "0");
-    }
-
-    return b;
-}
-
-const char *four_byte_to_binary(int x)
-{
-    static char b [33];
-    b[0] = '\0';
-    strcat(b, byte_to_binary(x>>24));
-    strcat(b, byte_to_binary(x>>16));
-    strcat(b, byte_to_binary(x>>8));
-    strcat(b, byte_to_binary(x));
-    
-    return b;
-}    
 
 /*********************************************************************
  *
