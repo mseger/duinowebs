@@ -21,15 +21,21 @@ class LinkLayer
   	// variables
     LinkLayer(int datalength, char *sourceMAC, char *destMAC, unsigned char *frameType);
 
-    // helper functions
+    // overarching functions 
+    void send_message();
+    void receive_message();
+    
+    // send helper functions
     unsigned long crc_update(unsigned long crc, byte data);
     unsigned long crc_string(char *s);
     void data_generation(char *payload, int datalength);
     void print_frame(char *stuff, int framesize);
     void append_all(char *all_appended, char *payload, int framesize);
     
-    // overarching functions 
-    void send_message();
+    // receive helper functions
+    int checkMAC(char *received);
+    int checkFrametype(char *received); 
+    int checkCRC(char *received);
     
   private: 
     // send instance variables
@@ -42,6 +48,10 @@ class LinkLayer
     int *_crc_table;
     
     // receive instance variables
+    unsigned char _max_bytes; 
+    unsigned char *_rec_packet;
+    char *_rec_packet_char;
+    unsigned char *_rec_data; 
 };
 
 #endif
